@@ -1,5 +1,5 @@
 <?php
-namespace Eminiarts\NovaPermissions\Policies;
+namespace Bavix\NovaPermissions\Policies;
 
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;

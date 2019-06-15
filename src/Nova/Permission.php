@@ -1,5 +1,5 @@
 <?php
-namespace Eminiarts\NovaPermissions\Nova;
+namespace Bavix\NovaPermissions\Nova;
 
 use Laravel\Nova\Nova;
 use Laravel\Nova\Resource;
@@ -10,11 +10,11 @@ use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\MorphToMany;
 use Laravel\Nova\Fields\BelongsToMany;
-use Eminiarts\NovaPermissions\Nova\Role;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 class Permission extends Resource
 {
+
     /**
      * @var mixed
      */
@@ -44,29 +44,6 @@ class Permission extends Resource
     public static $title = 'name';
 
     /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [
-        ];
-    }
-
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function cards(Request $request)
-    {
-        return [];
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request $request
@@ -83,21 +60,16 @@ class Permission extends Resource
         return [
             ID::make('Id', 'id')
                 ->rules('required')
-                ->hideFromIndex()
-            ,
+                ->hideFromIndex(),
+
             Text::make(__('Name'), 'name')
                 ->rules(['required', 'string', 'max:255'])
                 ->creationRules('unique:' . config('permission.table_names.permissions'))
                 ->updateRules('unique:' . config('permission.table_names.permissions') . ',name,{{resourceId}}'),
 
-            Text::make(__('Group'), 'group'),
-
             Select::make(__('Guard Name'), 'guard_name')
                 ->options($guardOptions->toArray())
                 ->rules(['required', Rule::in($guardOptions)]),
-
-            // DateTime::make(__('nova-permission-tool::permissions.created_at'), 'created_at')->exceptOnForms(),
-            // DateTime::make(__('nova-permission-tool::permissions.updated_at'), 'updated_at')->exceptOnForms(),
 
             BelongsToMany::make(__('Roles'), 'roles', Role::class),
             MorphToMany::make($userResource::label(), 'users', $userResource)->searchable(),
@@ -105,39 +77,19 @@ class Permission extends Resource
     }
 
     /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return string
      */
-    public function filters(Request $request)
-    {
-        return [];
-    }
-
-    public static function getModel()
-    {
-        //return app(PermissionRegistrar::class)->getPermissionClass();
-    }
-
-    public static function label()
+    public static function label(): string
     {
         return __('Permissions');
     }
 
     /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return string
      */
-    public function lenses(Request $request)
-    {
-        return [];
-    }
-
-    public static function singularLabel()
+    public static function singularLabel(): string
     {
         return __('Permission');
     }
+
 }

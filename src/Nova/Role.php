@@ -1,5 +1,5 @@
 <?php
-namespace Eminiarts\NovaPermissions\Nova;
+namespace Bavix\NovaPermissions\Nova;
 
 use Laravel\Nova\Nova;
 use Laravel\Nova\Resource;
@@ -9,12 +9,13 @@ use Laravel\Nova\Fields\Text;
 use Illuminate\Validation\Rule;
 use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\MorphToMany;
-use Eminiarts\NovaPermissions\Checkboxes;
-use Eminiarts\NovaPermissions\Role as RoleModel;
+use Bavix\NovaPermissions\Checkboxes;
+use Spatie\Permission\Models\Role as RoleModel;
 use Spatie\Permission\Models\Permission as SpatiePermission;
 
 class Role extends Resource
 {
+
     /**
      * @var mixed
      */
@@ -44,34 +45,12 @@ class Role extends Resource
     public static $title = 'name';
 
     /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function actions(Request $request)
-    {
-        return [];
-    }
-
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
-     */
-    public function cards(Request $request)
-    {
-        return [];
-    }
-
-    /**
      * Get the fields displayed by the resource.
      *
      * @param  \Illuminate\Http\Request $request
      * @return array
      */
-    public function fields(Request $request)
+    public function fields(Request $request): array
     {
         $guardOptions = collect(config('auth.guards'))->mapWithKeys(function ($value, $key) {
             return [$key => $key];
@@ -82,65 +61,50 @@ class Role extends Resource
         return [
             ID::make('Id', 'id')
                 ->rules('required')
-                ->hideFromIndex()
-            ,
+                ->hideFromIndex(),
+
             Text::make(__('Name'), 'name')
                 ->rules(['required', 'string', 'max:255'])
                 ->creationRules('unique:' . config('permission.table_names.roles'))
-                ->updateRules('unique:' . config('permission.table_names.roles') . ',name,{{resourceId}}')
+                ->updateRules('unique:' . config('permission.table_names.roles') . ',name,{{resourceId}}'),
 
-            ,
             Select::make(__('Guard Name'), 'guard_name')
                 ->options($guardOptions->toArray())
                 ->rules(['required', Rule::in($guardOptions)])
                 ->canSee(function ($request) {
                     return $request->user()->isSuperAdmin();
-                })
-            ,
+                }),
+
             Checkboxes::make(__('Permissions'), 'prepared_permissions')->withGroups()->options(SpatiePermission::all()->map(function ($permission, $key) {
                 return [
                     'group'  => __(ucfirst($permission->group)),
                     'option' => $permission->name,
                     'label'  => __($permission->name),
                 ];
-            })->groupBy('group')->toArray())
-            ,
+            })->groupBy('group')->toArray()),
+
             Text::make(__('Users'), function () {
                 return count($this->users);
             })->exceptOnForms(),
+
             MorphToMany::make($userResource::label(), 'users', $userResource)->searchable(),
         ];
     }
 
     /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return string
      */
-    public function filters(Request $request)
-    {
-        return [];
-    }
-
-    public static function label()
+    public static function label(): string
     {
         return __('Roles');
     }
 
     /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @return array
+     * @return string
      */
-    public function lenses(Request $request)
-    {
-        return [];
-    }
-
-    public static function singularLabel()
+    public static function singularLabel(): string
     {
         return __('Role');
     }
+
 }
