@@ -1,5 +1,5 @@
 <?php
-namespace Eminiarts\NovaPermissions\Nova;
+namespace Bavix\NovaPermissions\Nova;
 
 use Laravel\Nova\Resource as NovaResource;
 use Laravel\Nova\Http\Requests\NovaRequest;

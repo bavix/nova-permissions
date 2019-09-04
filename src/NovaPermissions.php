@@ -1,13 +1,14 @@
 <?php
-namespace Eminiarts\NovaPermissions;
+namespace Bavix\NovaPermissions;
 
 use Laravel\Nova\Nova;
 use Laravel\Nova\Tool;
-use Eminiarts\NovaPermissions\Nova\Role;
-use Eminiarts\NovaPermissions\Nova\Permission;
+use Bavix\NovaPermissions\Nova\Role;
+use Bavix\NovaPermissions\Nova\Permission;
 
 class NovaPermissions extends Tool
 {
+
     /**
      * @var mixed
      */
@@ -75,4 +76,5 @@ class NovaPermissions extends Tool
 
         return $this;
     }
+
 }

@@ -1,5 +1,5 @@
 <?php
-namespace Eminiarts\NovaPermissions;
+namespace Bavix\NovaPermissions;
 
 use Laravel\Nova\Fields\Field;
 use Laravel\Nova\Http\Requests\NovaRequest;
